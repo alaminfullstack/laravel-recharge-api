@@ -144,7 +144,8 @@
             <div class="card border-0 mb-3 mt-2">
 
                 <div class="">
-                    <input type="text" autofocus required name="transaction_id" class="form-control border-0 shadow-none fs-8"
+                    <input type="text" autofocus required name="transaction_id"
+                        class="form-control border-0 shadow-none fs-8"
                         placeholder="অর্থপ্রদানের পরে অনুগ্রহ করে আপনার [লেনদেন আইডি]" />
                 </div>
 
@@ -157,10 +158,41 @@
             <input type="hidden" name="method_number"
                 value="@if ($method == 'bkash') {{ $bkash }}  @else {{ $nagad }} @endif">
 
-            <button type="submit" class="btn btn-lg btn-success mb-3 w-100 border-0 fs-8" style="border-radius: 25px;">পেমেন্ট নিশ্চিত করুন</button>
+            <button type="submit" class="btn btn-lg btn-success mb-3 w-100 border-0 fs-8"
+                style="border-radius: 25px;">পেমেন্ট নিশ্চিত করুন</button>
         </form>
 
         <a href="{{ $request_url }}" class="nav-link">Back To Main Website</a>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-b-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="text-success">
+                        <i class="lar la-check-circle" style="font-size: 120px;"></i>
+                    </div>
+
+                    <h5 class="fw-bold mb-4">
+                        সফলভাবে জমা দেওয়া হয়েছে
+                    </h5>
+
+                    <p class="mb-3">
+                        আপনার লেনদেন সফলভাবে জমা দেওয়া হয়েছে এবং 5 মিনিটের মধ্যে অনুমোদিত হবে।
+                    </p>
+
+                    <button class="btn btn-success">
+                        <span id="second">
+                            5
+                        </span>
+
+                        সেকেন্ড পরে পুনঃনির্দেশ করা হচ্ছে
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
@@ -169,56 +201,76 @@
     <script src="{{ asset('frontend') }}/assets/js/jquery.toast.js"></script>
     <script src="{{ asset('frontend') }}/assets/js/bootstrap.bundle.min.js"></script>
 
-    @if(session()->has('type'))
-    <script>
-      $.toast({
-        text: @json(session()->get('type')),
-        position: "mid-center",
-        allowToastClose: false,
-        stack: false,
-        icon: @json(session()->get('type')),
-        loader: false,
-      });
-    </script>
-    @endif
-
-    @if(session()->has('error'))
-    <script>
-      $.toast({
-        text: @json(session()->get('error')),
-        position: "mid-center",
-        allowToastClose: false,
-        stack: false,
-        loader: false,
-      });
-    </script>
-    @endif
-    
-    @if(session()->has('success'))
-    <script>
-      $.toast({
-        text: @json(session()->get('success')),
-        position: "mid-center",
-        allowToastClose: false,
-        stack: false,
-        loader: false,
+    @if (session()->has('type'))
+        @if(session()->get('type') == 'success')
+            <script>
+                $(document).ready(function() {
+                    $('#staticBackdrop').modal('show');
         
-      });
-    </script>
-    @endif
-    
-    @if(session()->has('message'))
-    <script>
-      $.toast({
-        text: @json(session()->get('message')),
-        position: "mid-center",
-        allowToastClose: false,
-        stack: false,
-        loader: false,
-      });
-    </script>
+                    // Start the countdown
+                    var countdown = 5; // Initial countdown value in seconds
+        
+                    var intervalId = setInterval(function() {
+                        countdown--;
+        
+                        // Update the countdown value in the modal
+                        $('#second').text(countdown);
+        
+                        // Check if the countdown has reached 0
+                        if (countdown <= 0) {
+                            // Hide the modal
+                            $('#staticBackdrop').modal('hide');
+        
+                            // Clear the interval
+                            clearInterval(intervalId);
+        
+                            // Redirect to your new URL
+                            window.location.href = @json(session()->get('url'));
+                        }
+                    }, 1000); // Update every 1000 milliseconds (1 second)
+                });
+            </script>
+        @endif
     @endif
 
+    @if (session()->has('error'))
+        <script>
+            $.toast({
+                text: @json(session()->get('error')),
+                position: "mid-center",
+                allowToastClose: false,
+                stack: false,
+                loader: false,
+            });
+        </script>
+    @endif
+
+    @if (session()->has('success'))
+        <script>
+            $.toast({
+                text: @json(session()->get('success')),
+                position: "mid-center",
+                allowToastClose: false,
+                stack: false,
+                loader: false,
+
+            });
+        </script>
+    @endif
+
+    @if (session()->has('message'))
+        <script>
+            $.toast({
+                text: @json(session()->get('message')),
+                position: "mid-center",
+                allowToastClose: false,
+                stack: false,
+                loader: false,
+            });
+        </script>
+    @endif
+
+    
 </body>
 
 </html>
