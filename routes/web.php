@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RechargeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/payment', [RechargeController::class, 'index']);
+Route::get('/payment-preview', [RechargeController::class, 'payment_preview']);
+Route::post('/payment-confirm', [RechargeController::class, 'payment_confirm']);
